@@ -1,0 +1,51 @@
+
+
+FROM centos:7 
+
+ENV JAVA_VERSION_MAJOR=8 \
+    JAVA_VERSION_MINOR=144 \
+    JAVA_VERSION_BUILD=01 \
+    JAVA_URL_HASH=090f390dda5b47b9b721c7dfaa008135 \
+    SPARK_HOME=/opt/spark/latest
+
+# Install packages
+RUN yum install -y wget && \
+    yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel git && \
+    yum install -y xeyes && \
+    yum install -y krb5-workstation && \
+    yum install -y unzip && \
+    yum clean all
+
+#
+RUN mkdir -p /opt/spark && \
+    mkdir -p /opt/livy/
+
+
+# Set environment variables.
+ENV HOME /root
+ENV JDK_HOME /usr/lib/jvm/java/
+ENV JAVA_HOME /usr/lib/jvm/java
+ENV JAVA_EXE /usr/lib/jvm/java/jre/bin/java
+ENV JRE_HOME /usr/lib/jvm/java/jre
+ENV LANG C.UTF-8
+
+# Install livy
+RUN set -ex && \
+    wget -q http://apache.mirror.anlx.net/incubator/livy/0.7.0-incubating/apache-livy-0.7.0-incubating-bin.zip && \
+    unzip apache-livy-0.7.0-incubating-bin.zip -d /opt/livy && \
+    rm apache-livy-0.7.0-incubating-bin.zip && \
+    ln -s /opt/livy/apache-livy-0.7.0-incubating-bin/ /opt/livy/latest
+
+# Install Spark
+RUN set -ex && \
+    wget -q http://apache.mirror.anlx.net/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz && \
+    tar -xf spark-2.4.5-bin-hadoop2.7.tgz -C /opt/spark && \
+    rm spark-2.4.5-bin-hadoop2.7.tgz && \
+    ln -s /opt/spark/spark-2.4.5-bin-hadoop2.7/ /opt/spark/latest && \
+    mkdir -p /opt/livy/latest/logs
+    
+# Define working directory.
+WORKDIR /root
+
+# Define default command.
+CMD ["bash"]
