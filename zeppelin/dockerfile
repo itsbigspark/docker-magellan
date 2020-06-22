@@ -51,13 +51,13 @@ RUN echo "$LOG_TAG Install python related packages" && \
     conda install pandas matplotlib numpy scikit-learn pandasql ipython jupyter grpcio protobuf bokeh
 
 # Install Spark
-RUN set -ex && \
+ RUN echo "$LOG_TAG Installing Spark" && \
+    set -ex && \
     mkdir -p /opt/spark && \
     wget -q http://apache.mirror.anlx.net/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz && \
     tar -xf spark-2.4.5-bin-hadoop2.7.tgz -C /opt/spark && \
     rm spark-2.4.5-bin-hadoop2.7.tgz && \
-    ln -s /opt/spark/spark-2.4.5-bin-hadoop2.7/ /opt/spark/latest && \
-    mkdir -p /opt/livy/latest/logs
+    ln -s /opt/spark/spark-2.4.5-bin-hadoop2.7/ /opt/spark/latest
 
 # Install Zeppelin
 RUN echo "$LOG_TAG Installing Zeppelin" && \
@@ -65,10 +65,8 @@ RUN echo "$LOG_TAG Installing Zeppelin" && \
     wget -q http://apache.mirror.anlx.net/zeppelin/zeppelin-0.8.2/zeppelin-0.8.2-bin-all.tgz && \
     tar -xf zeppelin-0.8.2-bin-all.tgz -C /opt/zeppelin && \
     rm zeppelin-0.8.2-bin-all.tgz && \
-    ln -s /opt/zeppelin/zeppelin-0.8.2-bin-all /opt/zeppelin/latest
-
-
-
+    ln -s /opt/zeppelin/zeppelin-0.8.2-bin-all /opt/zeppelin/latest && \
+    wget -P /opt/spark/latest/jars/ https://repo1.maven.org/maven2/com/amazon/deequ/deequ/1.0.4/deequ-1.0.4.jar 
 
 EXPOSE 8080
 
